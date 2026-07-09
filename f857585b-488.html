@@ -1,0 +1,115 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><title>AI Search Health Score - Lucky Saint</title>
+<style>
+  :root{color-scheme:light;--ground:#F5F3EC;--card:#FFFFFF;--deep:#000280;--bone:#26253B;--muted:#6E6C88;--line:#E4E0D3;--faint:#EAE7DC;
+    --lime:#D1FFA4;--lilac:#E6A0FE;--electric:#016FE9;--coral:#E8543D;--amber:#C98A2E;--good:#3E9E55;--r:16px;
+    --sans:"SF Pro Display",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,monospace;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--bone);font-family:var(--sans);line-height:1.5;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(120% 80% at 85% -10%, rgba(230,160,254,.16), transparent 60%);}
+  .wrap{max-width:720px;margin:0 auto;padding:28px 24px 72px}
+  .cols{margin-top:40px}
+  .cols section{margin:0 0 18px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 28px;box-shadow:0 1px 2px rgba(0,2,128,.05)}
+  @media(min-width:880px){
+    .wrap{max-width:1060px;padding:40px 40px 80px}
+    .hero{display:grid;grid-template-columns:1fr auto;column-gap:60px;align-items:center;
+      grid-template-areas:"who score" "brand score" "cat score" "verdict score";padding-top:40px}
+    .hero .who{grid-area:who}.hero .brand{grid-area:brand}.hero .cat{grid-area:cat}
+    .hero .scoreRow{grid-area:score;justify-content:flex-end;align-self:center;margin:0}
+    .hero .verdict{grid-area:verdict;margin-top:14px}
+    .cols{column-count:2;column-gap:40px;margin-top:52px}
+    .cols section{break-inside:avoid;margin:0 0 22px}
+    .gap{display:flex;align-items:center;justify-content:space-between;gap:44px}
+    .gap .gaptext{flex:1}.gap .btn{flex:none}
+  }
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--deep)}
+  a.btn{display:inline-flex;align-items:center;gap:10px;background:var(--lime);color:#000280;text-decoration:none;font-weight:700;padding:15px 26px;border-radius:999px;font-size:16px}
+  a.btn:hover{filter:brightness(1.05)}
+  .tabular{font-variant-numeric:tabular-nums}
+  .top{display:flex;justify-content:space-between;align-items:center;padding-bottom:34px}
+  .mark{font-weight:800;font-size:19px;letter-spacing:-.02em;color:var(--deep)}.mark span{color:var(--electric)}
+  .hero{border-top:1px solid var(--faint);padding-top:30px}
+  .who{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .brand{font-size:clamp(34px,7vw,52px);font-weight:800;letter-spacing:-.03em;line-height:1.02;margin:8px 0 2px;text-wrap:balance;color:var(--deep)}
+  .cat{color:var(--muted);font-size:16px}
+  .scoreRow{display:flex;align-items:flex-end;gap:22px;margin:26px 0 10px;flex-wrap:wrap}
+  .score{font-family:var(--mono);font-size:clamp(84px,19vw,156px);font-weight:700;line-height:.8;color:var(--coral);letter-spacing:-.04em}
+  .outof{font-family:var(--mono);color:var(--muted);font-size:26px;font-weight:500}
+  .grade{align-self:center;font-family:var(--mono);font-weight:700;font-size:15px;letter-spacing:.1em;color:var(--coral);border:1.5px solid var(--coral);border-radius:8px;padding:6px 12px}
+  .verdict{font-size:19px;max-width:52ch;text-wrap:pretty;color:var(--bone)}.verdict b{color:var(--coral)}
+  section{margin-top:44px}
+  h2{font-size:13px;font-family:var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--deep);font-weight:600;margin:0 0 18px;display:flex;align-items:center;gap:10px}
+  h2::after{content:"";flex:1;height:1px;background:var(--faint)}
+  .eng{display:grid;grid-template-columns:104px 1fr 92px;align-items:center;gap:14px;padding:11px 0;border-bottom:1px solid var(--faint)}
+  .eng:last-child{border-bottom:0}.eng .name{font-weight:600;font-size:15px}
+  .track{height:9px;border-radius:6px;background:#ECE9DE;overflow:hidden}.fill{height:100%;border-radius:6px}
+  .eng .val{font-family:var(--mono);text-align:right;font-size:14px;color:var(--muted)}.z{color:var(--coral)}
+  .q{display:flex;gap:13px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--faint)}.q:last-child{border-bottom:0}
+  .q .ic{font-family:var(--mono);font-weight:700;flex:none;width:16px}.q .no{color:var(--coral)}.q .yes{color:var(--good)}
+  .q .txt{font-size:15.5px}.q.miss .txt{color:var(--muted)}
+  .q .tag{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--good);border:1px solid rgba(62,158,85,.45);border-radius:999px;padding:2px 9px;white-space:nowrap;align-self:center}
+  .comp{display:grid;grid-template-columns:150px 1fr 34px;align-items:center;gap:14px;padding:8px 0}
+  .comp .cname{font-size:15px;font-weight:500}.comp .ctrack{height:22px}.comp .cfill{height:22px;border-radius:6px;background:linear-gradient(90deg,var(--lilac),var(--electric))}
+  .comp .cnum{font-family:var(--mono);text-align:right;color:var(--muted);font-size:14px}
+  .lead{color:var(--muted);font-size:15.5px;max-width:58ch;margin:-6px 0 18px}
+  .src{display:flex;flex-wrap:wrap;gap:9px}
+  .chip{font-family:var(--mono);font-size:13px;color:var(--bone);background:var(--ground);border:1px solid var(--line);border-radius:999px;padding:8px 14px}
+  .gap{margin-top:48px;background:var(--deep);border-radius:var(--r);padding:36px 34px}
+  .gap .big{font-size:clamp(22px,4.4vw,30px);font-weight:800;letter-spacing:-.02em;line-height:1.15;text-wrap:balance;margin:0 0 6px;color:var(--ground)}.gap .big b{color:#FF8B79}
+  .gap p{color:rgba(246,244,237,.74);font-size:16px;max-width:54ch;margin:0 0 22px}
+  .foot{margin-top:40px;padding-top:22px;border-top:1px solid var(--faint);color:var(--muted);font-size:13px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-family:var(--mono)}
+</style>
+<div class="wrap">
+  <div class="top"><div class="mark">gener<span>a</span>tive</div><div class="eyebrow">AI Search Health Score</div></div>
+  <div class="hero">
+    <div class="who">Audit for</div>
+    <div class="brand">Lucky Saint</div>
+    <div class="cat">alcohol-free beer&nbsp;&nbsp;·&nbsp;&nbsp;checked across Claude, ChatGPT, Google AI, Perplexity</div>
+    <div class="scoreRow"><div class="score tabular">14</div><div class="outof">/100</div><div class="grade">GRADE F</div></div>
+    <p class="verdict">When buyers ask AI which alcohol-free beer to choose, you are recommended in just <b>4 of 26</b> buying moments. For a brand like this, that is a serious discovery gap.</p>
+  </div>
+  <div class="cols">
+  <section><h2>Visibility by engine</h2>
+<div class="eng"><div class="name">ChatGPT</div><div class="track"></div><div class="val"><span class="z">0</span>/8 · 0%</div></div>
+<div class="eng"><div class="name">Claude</div><div class="track"></div><div class="val"><span class="z">0</span>/8 · 0%</div></div>
+<div class="eng"><div class="name">Google AI</div><div class="track"></div><div class="val"><span class="z">0</span>/2 · 0%</div></div>
+<div class="eng"><div class="name">Perplexity</div><div class="track"><div class="fill" style="width:50%;background:var(--lime)"></div></div><div class="val">4/8 · 50%</div></div>
+  </section>
+  <section><h2>Where buyers are deciding</h2>
+<div class="q miss"><span class="ic no">✗</span><span class="txt">What's the best alcohol-free beer overall?</span></div>
+<div class="q"><span class="ic yes">✓</span><span class="txt">Which alcohol-free beer tastes most like regular beer?</span><span class="tag">Perplexity</span></div>
+<div class="q miss"><span class="ic no">✗</span><span class="txt">What alcohol-free beer should I buy for a dinner party?</span></div>
+<div class="q"><span class="ic yes">✓</span><span class="txt">I'm new to alcohol-free beer, what would you recommend for a beginner?</span><span class="tag">Perplexity</span></div>
+<div class="q"><span class="ic yes">✓</span><span class="txt">What's a good alcohol-free beer to give as a gift?</span><span class="tag">Perplexity</span></div>
+<div class="q miss"><span class="ic no">✗</span><span class="txt">Which alcohol-free beers offer the best value for money?</span></div>
+<div class="q miss"><span class="ic no">✗</span><span class="txt">Do you have any alcohol-free beers similar to Guinness?</span></div>
+<div class="q"><span class="ic yes">✓</span><span class="txt">What alcohol-free beer is best for hot summer days?</span><span class="tag">Perplexity</span></div>
+  </section>
+  <section><h2>Who AI recommends instead</h2>
+<div class="comp"><div class="cname">Athletic Brewing</div><div class="ctrack"><div class="cfill" style="width:100%"></div></div><div class="cnum">14</div></div>
+<div class="comp"><div class="cname">Heineken 0.0</div><div class="ctrack"><div class="cfill" style="width:57%"></div></div><div class="cnum">8</div></div>
+<div class="comp"><div class="cname">Guinness 0.0</div><div class="ctrack"><div class="cfill" style="width:50%"></div></div><div class="cnum">7</div></div>
+<div class="comp"><div class="cname">Heineken</div><div class="ctrack"><div class="cfill" style="width:43%"></div></div><div class="cnum">6</div></div>
+<div class="comp"><div class="cname">Clausthaler</div><div class="ctrack"><div class="cfill" style="width:43%"></div></div><div class="cnum">6</div></div>
+  </section>
+  <section>
+    <h2>What AI reads to decide</h2>
+    <p class="lead">These are the pages AI pulls from to answer the questions above. This is where recommendations are won - and you are missing from the ones that matter.</p>
+    <div class="src"><span class="chip">porchdrinking.com</span>
+<span class="chip">beantobarstool.com</span>
+<span class="chip">facebook.com</span>
+<span class="chip">throwingspaghetti.substack.com</span>
+<span class="chip">tastingtable.com</span>
+<span class="chip">reddit.com</span>
+<span class="chip">proofnomore.com</span>
+<span class="chip">athleticbrewing.com</span></div>
+  </section>
+  </div>
+  <div class="gap">
+    <div class="gaptext">
+      <p class="big">You're invisible in <b>85%</b> of the moments a buyer is deciding.</p>
+      <p>The good news: this is fixable, and most of your category hasn't noticed the channel yet. A Snapshot maps exactly which sources to win, in what order, to get named in the answer.</p>
+    </div>
+    <a class="btn" href="#">Book your free Snapshot →</a>
+  </div>
+  <div class="foot"><span>generative · ai search visibility</span><span>4 engines · 26 queries</span></div>
+</div></body></html>
